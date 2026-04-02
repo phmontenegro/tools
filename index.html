@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geoneration · Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:           #0a0a0a;
+    --surface:      #111111;
+    --surface2:     #181818;
+    --surface3:     #202020;
+    --border:       #2a2a2a;
+    --border-light: #3a3a3a;
+    --text:         #f0ede8;
+    --text-muted:   #7a7268;
+    --text-dim:     #3e3a34;
+    --accent:       #f07020;
+    --accent-dim:   #a04010;
+    --accent-glow:  rgba(240,112,32,0.12);
+    --ok:           #50c878;
+    --info:         #80b0d8;
+    --geo-blue:     #1d5f82;
+    --geo-gold:     #c8962a;
+    --font-mono:    'Space Mono', monospace;
+    --font-body:    'DM Sans', sans-serif;
+    --radius:       5px;
+    --radius-lg:    12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOP STRIPE ── */
+  .accent-stripe {
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-dim) 55%, transparent 100%);
+    flex-shrink: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s;
+  }
+  .logo:hover { opacity: 0.82; }
+
+  /* SVG logo mark container */
+  .logo-svg {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+  }
+
+  .logo-name {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .logo-sub {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.13em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    line-height: 1;
+    margin-top: 4px;
+  }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+  }
+
+  .header-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .header-author {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── MAIN ── */
+  main {
+    flex: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 64px 32px 48px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    margin-bottom: 64px;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .hero-content {}
+
+  .hero-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero p {
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 480px;
+    line-height: 1.75;
+  }
+
+  /* ── TRIANGULATION DECORATION ── */
+  .hero-deco {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: visible;
+  }
+
+  .hero-deco svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── TOOL GRID ── */
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  /* ── TOOL CARD ── */
+  .tool-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.22s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--card-accent, var(--accent));
+    opacity: 0;
+    transition: opacity 0.22s;
+  }
+
+  .tool-card:not(.coming-soon):hover {
+    border-color: var(--card-accent, var(--accent));
+    background: var(--surface2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--card-accent, var(--accent));
+  }
+
+  .tool-card:not(.coming-soon):hover::before { opacity: 1; }
+
+  .tool-card.coming-soon {
+    opacity: 0.48;
+    cursor: default;
+  }
+
+  .tool-card.orange { --card-accent: var(--accent); }
+  .tool-card.green  { --card-accent: var(--ok); }
+  .tool-card.blue   { --card-accent: var(--info); }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  /* check icon for drillcheck */
+  .card-icon {
+    width: 42px; height: 42px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+  }
+
+  .tool-card.orange .card-icon { background: rgba(240,112,32,0.1); border-color: rgba(240,112,32,0.25); }
+  .tool-card.green  .card-icon { background: rgba(80,200,120,0.1); border-color: rgba(80,200,120,0.25); }
+  .tool-card.blue   .card-icon { background: rgba(128,176,216,0.1); border-color: rgba(128,176,216,0.25); }
+
+  .card-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .badge-live { background: rgba(80,200,120,0.12); color: var(--ok);   border: 1px solid rgba(80,200,120,0.3); }
+  .badge-soon { background: rgba(120,114,104,0.12); color: var(--text-muted); border: 1px solid var(--border); }
+
+  .card-name {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+  }
+
+  .card-subtitle {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-url {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+
+  .tool-card:not(.coming-soon):hover .card-url { color: var(--card-accent, var(--accent)); }
+
+  .card-arrow {
+    font-size: 14px;
+    color: var(--text-dim);
+    transition: transform 0.2s, color 0.2s;
+  }
+
+  .tool-card:not(.coming-soon):hover .card-arrow {
+    transform: translateX(4px);
+    color: var(--card-accent, var(--accent));
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: var(--surface3);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    text-transform: uppercase;
+  }
+
+  /* ── ABOUT STRIP ── */
+  .about-strip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+
+  .about-divider {
+    width: 1px;
+    min-height: 60px;
+    background: var(--border);
+    flex-shrink: 0;
+    align-self: stretch;
+  }
+
+  .about-item { flex: 1; }
+
+  .about-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .about-value {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .about-value strong { color: var(--text); font-weight: 500; }
+
+  .linkedin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 9px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: #4a9fd4;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .linkedin-link:hover { color: #7abfe8; }
+  .linkedin-link svg { flex-shrink: 0; border-radius: 3px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .footer-left  { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.06em; }
+  .footer-right { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.04em; }
+  .footer-right span { color: var(--accent); }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeUp 0.55s ease forwards;
+  }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .fade-up:nth-child(1) { animation-delay: 0.05s; }
+  .fade-up:nth-child(2) { animation-delay: 0.14s; }
+  .fade-up:nth-child(3) { animation-delay: 0.23s; }
+  .fade-up:nth-child(4) { animation-delay: 0.32s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-deco { display: none; }
+  }
+
+  @media (max-width: 640px) {
+    main { padding: 40px 16px 32px; }
+    header { padding: 0 16px; }
+    footer { padding: 10px 16px; flex-direction: column; gap: 4px; text-align: center; }
+    .about-strip { flex-direction: column; gap: 20px; }
+    .about-divider { width: 100%; min-height: 1px; align-self: auto; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="accent-stripe"></div>
+
+  <header>
+    <a class="logo" href="https://tools.geoneration.com">
+      <!--
+        GEONERATION logo mark: triangulation mesh in black & orange.
+        Outer triangle frame + internal delaunay-style facets.
+      -->
+      <svg class="logo-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="tri-logo-clip">
+            <polygon points="40,4 76,68 4,68"/>
+          </clipPath>
+        </defs>
+        <!-- Main triangle background -->
+        <polygon points="40,4 76,68 4,68" fill="#111111" stroke="#f07020" stroke-width="2" stroke-linejoin="round"/>
+        <!-- Internal triangulation facets clipped -->
+        <g clip-path="url(#tri-logo-clip)">
+          <!-- filled accent facets -->
+          <polygon points="40,4  24,36 40,36"  fill="#f07020" opacity="0.18"/>
+          <polygon points="40,4  40,36 56,36"  fill="#f07020" opacity="0.10"/>
+          <polygon points="24,36 16,68 40,54"  fill="#f07020" opacity="0.14"/>
+          <polygon points="56,36 40,54 64,68"  fill="#f07020" opacity="0.09"/>
+          <polygon points="40,36 24,36 40,54"  fill="#f07020" opacity="0.20"/>
+          <!-- triangulation edge lines -->
+          <line x1="40" y1="4"  x2="24" y2="36" stroke="#f07020" stroke-width="1.1" opacity="0.7"/>
+          <line x1="40" y1="4"  x2="56" y2="36" stroke="#f07020" stroke-width="1.1" opacity="0.7"/>
+          <line x1="40" y1="4"  x2="40" y2="36" stroke="#f07020" stroke-width="0.9" opacity="0.5"/>
+          <line x1="24" y1="36" x2="56" y2="36" stroke="#f07020" stroke-width="0.9" opacity="0.6"/>
+          <line x1="24" y1="36" x2="40" y2="54" stroke="#f07020" stroke-width="0.9" opacity="0.55"/>
+          <line x1="56" y1="36" x2="40" y2="54" stroke="#f07020" stroke-width="0.9" opacity="0.55"/>
+          <line x1="40" y1="36" x2="40" y2="54" stroke="#f07020" stroke-width="0.8" opacity="0.4"/>
+          <line x1="4"  y1="68" x2="24" y2="36" stroke="#f07020" stroke-width="0.9" opacity="0.45"/>
+          <line x1="4"  y1="68" x2="40" y2="54" stroke="#f07020" stroke-width="0.9" opacity="0.4"/>
+          <line x1="76" y1="68" x2="56" y2="36" stroke="#f07020" stroke-width="0.9" opacity="0.45"/>
+          <line x1="76" y1="68" x2="40" y2="54" stroke="#f07020" stroke-width="0.9" opacity="0.4"/>
+          <line x1="4"  y1="68" x2="40" y2="68" stroke="#f07020" stroke-width="0.7" opacity="0.3"/>
+          <line x1="40" y1="68" x2="76" y2="68" stroke="#f07020" stroke-width="0.7" opacity="0.3"/>
+          <line x1="40" y1="54" x2="40" y2="68" stroke="#f07020" stroke-width="0.7" opacity="0.3"/>
+          <!-- vertex dots -->
+          <circle cx="40" cy="4"  r="2.2" fill="#f07020" opacity="0.9"/>
+          <circle cx="4"  cy="68" r="2.2" fill="#f07020" opacity="0.7"/>
+          <circle cx="76" cy="68" r="2.2" fill="#f07020" opacity="0.7"/>
+          <circle cx="24" cy="36" r="1.8" fill="#f07020" opacity="0.7"/>
+          <circle cx="56" cy="36" r="1.8" fill="#f07020" opacity="0.7"/>
+          <circle cx="40" cy="36" r="1.6" fill="#f07020" opacity="0.6"/>
+          <circle cx="40" cy="54" r="1.8" fill="#f07020" opacity="0.75"/>
+        </g>
+      </svg>
+
+      <div class="logo-text">
+        <div class="logo-name">GEONERATION</div>
+        <div class="logo-sub">Mineral Exploration Consulting</div>
+      </div>
+    </a>
+
+    <div class="header-right">
+      <div class="header-meta">Digital Tools Portal</div>
+      <div class="header-author">2026 · All rights reserved</div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <div class="hero fade-up">
+      <div class="hero-content">
+        <div class="hero-label">Mineral Exploration Digital Tools</div>
+        <h1>Tools built for<br><span>mineral exploration</span></h1>
+        <p>Web-based tools designed for mineral exploration workflows and validation. No installation required. Runs entirely in your browser.</p>
+      </div>
+
+      <!-- TRIANGULATION DECORATION -->
+      <div class="hero-deco">
+        <svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <radialGradient id="tri-fade" cx="30%" cy="50%" r="75%">
+              <stop offset="0%"   stop-color="#f07020" stop-opacity="0.18"/>
+              <stop offset="55%"  stop-color="#f07020" stop-opacity="0.07"/>
+              <stop offset="100%" stop-color="#f07020" stop-opacity="0"/>
+            </radialGradient>
+            <mask id="tri-mask">
+              <radialGradient id="tri-mask-grad" cx="30%" cy="50%" r="75%">
+                <stop offset="0%"   stop-color="white" stop-opacity="1"/>
+                <stop offset="60%"  stop-color="white" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="white" stop-opacity="0"/>
+              </radialGradient>
+              <rect width="280" height="200" fill="url(#tri-mask-grad)"/>
+            </mask>
+          </defs>
+
+          <!-- triangulation mesh — delaunay-style irregular triangles -->
+          <g mask="url(#tri-mask)" fill="none" stroke="#f07020" stroke-width="0.8" stroke-linejoin="round">
+            <!-- triangle faces subtle fill -->
+            <polygon points="40,160  110,80  160,150" fill="url(#tri-fade)" stroke="none"/>
+            <polygon points="110,80  160,150 200,60"  fill="url(#tri-fade)" stroke="none"/>
+            <polygon points="160,150 200,60  260,130" fill="url(#tri-fade)" stroke="none"/>
+
+            <!-- edge lines -->
+            <line x1="40"  y1="160" x2="110" y2="80"/>
+            <line x1="110" y1="80"  x2="160" y2="150"/>
+            <line x1="160" y1="150" x2="40"  y2="160"/>
+
+            <line x1="110" y1="80"  x2="200" y2="60"/>
+            <line x1="200" y1="60"  x2="160" y2="150"/>
+
+            <line x1="200" y1="60"  x2="260" y2="130"/>
+            <line x1="260" y1="130" x2="160" y2="150"/>
+
+            <line x1="40"  y1="160" x2="20"  y2="100"/>
+            <line x1="20"  y1="100" x2="110" y2="80"/>
+
+            <line x1="110" y1="80"  x2="150" y2="20"/>
+            <line x1="150" y1="20"  x2="200" y2="60"/>
+
+            <line x1="200" y1="60"  x2="260" y2="40"/>
+            <line x1="260" y1="40"  x2="260" y2="130"/>
+
+            <line x1="40"  y1="160" x2="80"  y2="190"/>
+            <line x1="80"  y1="190" x2="160" y2="150"/>
+            <line x1="160" y1="150" x2="220" y2="185"/>
+            <line x1="220" y1="185" x2="260" y2="130"/>
+
+            <line x1="20"  y1="100" x2="40"  y2="60"/>
+            <line x1="40"  y1="60"  x2="110" y2="80"/>
+            <line x1="40"  y1="60"  x2="150" y2="20"/>
+
+            <line x1="80"  y1="190" x2="20"  y2="160"/>
+            <line x1="20"  y1="160" x2="40"  y2="160"/>
+          </g>
+
+          <!-- vertex dots -->
+          <g fill="#f07020">
+            <circle cx="40"  cy="160" r="2.2" opacity="0.6"/>
+            <circle cx="110" cy="80"  r="2.2" opacity="0.6"/>
+            <circle cx="160" cy="150" r="2.2" opacity="0.6"/>
+            <circle cx="200" cy="60"  r="2.2" opacity="0.5"/>
+            <circle cx="260" cy="130" r="2.2" opacity="0.35"/>
+            <circle cx="20"  cy="100" r="1.8" opacity="0.4"/>
+            <circle cx="150" cy="20"  r="1.8" opacity="0.35"/>
+            <circle cx="260" cy="40"  r="1.8" opacity="0.25"/>
+            <circle cx="80"  cy="190" r="1.8" opacity="0.35"/>
+            <circle cx="220" cy="185" r="1.8" opacity="0.25"/>
+            <circle cx="40"  cy="60"  r="1.6" opacity="0.3"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="section-title">Available tools</div>
+
+    <div class="tool-grid">
+
+      <!-- DrillCheck -->
+      <a class="tool-card orange fade-up" href="https://drillcheck.geoneration.com" target="_blank">
+        <div class="card-top">
+          <!-- check/validate icon -->
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="1" width="20" height="20" rx="4" stroke="#f07020" stroke-width="1.5"/>
+              <polyline points="5,11 9,15 17,7" stroke="#f07020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="card-badge badge-live">Live</span>
+        </div>
+        <div>
+          <div class="card-name">Drilling Database<br>Integrity Tool</div>
+          <div class="card-subtitle">DrillCheck · v1.3</div>
+        </div>
+        <div class="card-desc">
+          Validate drillhole database integrity across Collar, Survey, Assay, Lithology and custom interval tables. Detects gaps, overlaps, orphan records, duplicate HoleIDs and coordinate inconsistencies.
+        </div>
+        <div class="card-tags">
+          <span class="tag">Collar</span>
+          <span class="tag">Survey</span>
+          <span class="tag">Assay</span>
+          <span class="tag">Lithology</span>
+          <span class="tag">CSV</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-url">drillcheck.geoneration.com</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <!-- EDA -->
+      <div class="tool-card green coming-soon fade-up">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="1" width="20" height="20" rx="4" stroke="#50c878" stroke-width="1.5"/>
+              <polyline points="3,16 7,10 11,13 15,6 19,9" stroke="#50c878" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="card-badge badge-soon">Coming soon</span>
+        </div>
+        <div>
+          <div class="card-name">Exploratory Data<br>Analysis</div>
+          <div class="card-subtitle">EDA · In development</div>
+        </div>
+        <div class="card-desc">
+          Exploratory data analysis for geochemical and assay datasets. Histograms, probability plots, scatter matrices, outlier detection and statistical summaries.
+        </div>
+        <div class="card-tags">
+          <span class="tag">Statistics</span>
+          <span class="tag">Geochemistry</span>
+          <span class="tag">Visualization</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-url">eda.geoneration.com</span>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ABOUT -->
+    <div class="section-title">About</div>
+
+    <div class="about-strip fade-up">
+      <div class="about-item">
+        <div class="about-label">Platform</div>
+        <div class="about-value"><strong>100% client-side.</strong> All data is processed locally in your browser. Nothing is uploaded or stored on any server or cloud system.</div>
+      </div>
+      <div class="about-divider"></div>
+      <div class="about-item">
+        <div class="about-label">Scope</div>
+        <div class="about-value">Tools focused on <strong>mineral exploration</strong> data workflows and validation. From database QA/QC to statistical analysis and resource modelling support.</div>
+      </div>
+      <div class="about-divider"></div>
+      <div class="about-item">
+        <div class="about-label">Author</div>
+        <div class="about-value">
+          <strong>PEDRO MONTENEGRO</strong><br>
+          Mineral Resources &amp; Modelling Manager<br>
+          MAusIMM CP(Geo) · PQR.CBRR<br>
+          <a href="https://www.linkedin.com/in/phmontenegro/" target="_blank" rel="noopener" class="linkedin-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect width="24" height="24" rx="4" fill="#0a66c2"/>
+              <path d="M7 9h2v8H7V9zm1-3a1.1 1.1 0 110 2.2A1.1 1.1 0 018 6zm4 3h2v1.1c.4-.7 1.2-1.2 2.2-1.2C18 9 19 10.2 19 12.2V17h-2v-4.5c0-1-.4-1.5-1.2-1.5-.9 0-1.4.6-1.4 1.6V17h-2V9z" fill="white"/>
+            </svg>
+            /phmontenegro
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="footer-left">GEONERATION · Tools Portal · tools.geoneration.com</div>
+    <div class="footer-right">By <span>Pedro Montenegro</span> · 2026 · All rights reserved</div>
+  </footer>
+
+</body>
+</html>
